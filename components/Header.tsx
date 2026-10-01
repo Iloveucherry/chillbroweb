@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export function Header() {
   return (
     <header className="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md md:flex-row md:items-center md:justify-between">
@@ -12,13 +14,22 @@ export function Header() {
       </div>
 
       <div className="flex flex-1 items-center justify-center px-0 md:px-8">
-        <div className="w-full max-w-xl rounded-full border border-white/10 bg-slate-900/80 px-4 py-2 text-sm text-slate-300">
-          Search songs, artists, playlists...
+        <div className="flex w-full max-w-xl items-center gap-3 rounded-full border border-white/10 bg-slate-900/80 px-4 py-2 text-sm text-slate-300">
+          <span className="text-violet-300">⌕</span>
+          <input
+            className="w-full bg-transparent text-sm text-white placeholder:text-slate-400 focus:outline-none"
+            placeholder="Search songs, artists, playlists..."
+          />
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        <button className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200">Explore</button>
+        <Link href="/" className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200">
+          Explore
+        </Link>
+        <Link href="/library" className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200">
+          Library
+        </Link>
         <button className="rounded-full bg-violet-500 px-4 py-2 text-sm font-medium text-white">Upgrade</button>
       </div>
     </header>
