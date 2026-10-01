@@ -1,69 +1,55 @@
-import { Heart, Pause, Play, SkipBack, SkipForward, Volume2 } from 'lucide-react';
-import { usePlayerStore } from '@/lib/store';
+import { create } from 'zustand';
 
-function formatDuration(seconds: number) {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-}
+export type Track = {
+  id: string;
+  title: string;
+  artist: string;
+  album: string;
+  duration: number;
+  genre: string;
+  artwork: string;
+  previewUrl: string;
+};
 
-export function MusicPlayer() {
-  const { currentTrack, isPlaying, togglePlay, playNext, playPrevious } = usePlayerStore();
+type PlayerState = {
+  queue: Track[];
+  currentTrack: Track | null;
+  currentIndex: number;
+  isPlaying: boolean;
+  setQueue: (tracks: Track[]) => void;
+  setCurrentTrack: (track: Track, index?: number) => void;
+  togglePlay: () => void;
+  playNext: () => void;
+  playPrevious: () => void;
+};
 
-  if (!currentTrack) {
-    return null;
-  }
+export const usePlayerStore = create<PlayerState>((set, get) => ({
+  queue: [],
+  currentTrack: null,
+  currentIndex: 0,
+  isPlaying: false,
 
-  return (
-    <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3">
-      <div className="flex items-center gap-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 font-black">
-          {currentTrack.title.slice(0, 1)}
-        </div>
-        <div>
-          <p className="font-medium">{currentTrack.title}</p>
-          <p className="text-sm text-slate-400">{currentTrack.artist}</p>
-        </div>
-        <button className="rounded-full bg-white/5 p-2 text-violet-300">
-          <Heart className="h-4 w-4" />
-        </button>
-      </div>
+  setQueue: (tracks) => set({ queue: tracks }),
 
-      <div className="hidden flex-1 max-w-2xl flex-col items-center gap-3 md:flex">
-        <div className="flex items-center gap-5">
-          <button className="rounded-full bg-white/5 p-2 text-slate-200" onClick={playPrevious}>
-            <SkipBack className="h-4 w-4" />
-          </button>
-          <button className="rounded-full bg-violet-500 p-3 text-white" onClick={togglePlay}>
-            {isPlaying ? <Pause className="h-4 w-4 fill-current" /> : <Play className="ml-0.5 h-4 w-4 fill-current" />}
-          </button>
-          <button className="rounded-full bg-white/5 p-2 text-slate-200" onClick={playNext}>
-            <SkipForward className="h-4 w-4" />
-          </button>
-        </div>
+  setCurrentTrack: (track, index) => set({
+    currentTrack: track,
+    currentIndex: index ?? get().queue.findIndex((item) => item.id === track.id),
+    isPlaying: true,
+  }),
 
-        <div className="flex w-full items-center gap-3 text-xs text-slate-300">
-          <span>1:44</span>
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full w-2/3 rounded-full bg-violet-400" />
-          </div>
-          <span>{formatDuration(currentTrack.duration)}</span>
-        </div>
-      </div>
+  togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
 
-      <div className="flex items-center gap-3 text-slate-300">
-        <Volume2 className="h-4 w-4" />
-        <div className="hidden h-1.5 w-24 rounded-full bg-white/10 md:block">
-          <div className="h-full w-2/3 rounded-full bg-emerald-400" />
-        </div>
-      </div>
+  playNext: () => {
+    const queue = get().queue;
+    if (!queue.length) return;
+    const nextIndex = (get().currentIndex + 1) % queue.length;
+    set({ currentTrack: queue[nextIndex], currentIndex: nextIndex, isPlaying: true });
+  },
 
-      <audio
-        src={currentTrack.previewUrl}
-        autoPlay={isPlaying}
-        onEnded={playNext}
-        className="hidden"
-      />
-    </div>
-  );
-}
+  playPrevious: () => {
+    const queue = get().queue;
+    if (!queue.length) return;
+    const previousIndex = (get().currentIndex - 1 + queue.length) % queue.length;
+    set({ currentTrack: queue[previousIndex], currentIndex: previousIndex, isPlaying: true });
+  },
+}));
