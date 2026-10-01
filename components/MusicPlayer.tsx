@@ -1,0 +1,55 @@
+import { Heart, Play, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+
+const currentTrack = {
+  title: 'Midnight Echo',
+  artist: 'Nova Drift',
+  duration: '3:42'
+};
+
+export function MusicPlayer() {
+  return (
+    <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3">
+      <div className="flex items-center gap-4">
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 font-black">
+          M
+        </div>
+        <div>
+          <p className="font-medium">{currentTrack.title}</p>
+          <p className="text-sm text-slate-400">{currentTrack.artist}</p>
+        </div>
+        <button className="rounded-full bg-white/5 p-2 text-violet-300">
+          <Heart className="h-4 w-4" />
+        </button>
+      </div>
+
+      <div className="hidden flex-1 max-w-2xl flex-col items-center gap-3 md:flex">
+        <div className="flex items-center gap-5">
+          <button className="rounded-full bg-white/5 p-2 text-slate-200">
+            <SkipBack className="h-4 w-4" />
+          </button>
+          <button className="rounded-full bg-violet-500 p-3 text-white">
+            <Play className="ml-0.5 h-4 w-4 fill-current" />
+          </button>
+          <button className="rounded-full bg-white/5 p-2 text-slate-200">
+            <SkipForward className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="flex w-full items-center gap-3 text-xs text-slate-300">
+          <span>1:44</span>
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
+            <div className="h-full w-2/3 rounded-full bg-violet-400" />
+          </div>
+          <span>{currentTrack.duration}</span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 text-slate-300">
+        <Volume2 className="h-4 w-4" />
+        <div className="hidden h-1.5 w-24 rounded-full bg-white/10 md:block">
+          <div className="h-full w-2/3 rounded-full bg-emerald-400" />
+        </div>
+      </div>
+    </div>
+  );
+}
